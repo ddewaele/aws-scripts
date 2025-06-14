@@ -13,7 +13,7 @@ trap cleanup SIGINT
 # Returns the access token in the ACCESS_TOKEN variable
 function get_sso_session() {
   local SSO_SESSION="$1"
-  
+
   # Try to get access token from latest cached session
   ACCESS_TOKEN=$(jq -r '.accessToken' ~/.aws/sso/cache/$(ls -t ~/.aws/sso/cache/ | head -1))
 

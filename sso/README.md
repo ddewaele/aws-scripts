@@ -8,7 +8,12 @@ This directory contains scripts for managing AWS SSO (Single Sign-On) configurat
 Configures AWS CLI profiles from your SSO permissions. See detailed documentation below.
 
 ### list_accounts.sh
-Lists all AWS accounts and roles you have access to via IAM Identity Center (formerly AWS SSO).
+Lists AWS accounts and roles you have access to via IAM Identity Center (formerly AWS SSO).
+
+Prerequisites:
+- fzf (Fuzzy Finder) installed
+  - macOS: `brew install fzf`
+  - Ubuntu: `apt install fzf`
 
 Usage:
 ```bash
@@ -17,35 +22,63 @@ Usage:
 
 The script will:
 1. Prompt for your SSO session name
-2. Log you into AWS SSO
-3. Display a table of all accounts you have access to
-4. For each account, show a table of available roles
+2. Log you into AWS SSO if needed
+3. Show an interactive interface where:
+   - Left side: List of accounts (use ↑/↓ to navigate, type to filter)
+   - Right side: Available roles for the currently selected account
+   - Roles update automatically as you move through the account list
+4. Press Enter to select an account
 
-Example output:
+Example:
 ```
-📋 Listing all accounts you have access to:
+📋 Select an account (use ↑/↓ to navigate, type to filter):
 ----------------------------------------
-|  AccountId   |  AccountName  |
-|-------------|---------------|
-|  123456789  |  Production   |
-|  987654321  |  Development  |
-
-👥 Available roles per account:
-----------------------------------------
-Account: Production (123456789)
-Roles:
-|  RoleName  |
-|------------|
-|  Admin     |
-|  Developer |
-
-Account: Development (987654321)
-Roles:
-|  RoleName  |
-|------------|
-|  Admin     |
-|  Developer |
+> Production (123456789)    |  👥 Available roles:
+  Development (987654321)   |  ------------------------
+  Staging (456789123)      |  |  RoleName  |
+                           |  |------------|
+                           |  |  Admin     |
+                           |  |  Developer |
 ```
+
+### get_token.sh
+Prints the current SSO access token and its information.
+
+Usage:
+```bash
+# IMPORTANT: The script must be SOURCED, not executed
+source get_token.sh
+# or
+. get_token.sh
+```
+
+The script will:
+1. Prompt for your SSO session name
+2. Log you into AWS SSO if needed
+3. Display the current access token
+4. Export the token as ACCESS_TOKEN environment variable
+5. Show token information (start URL, region, expiry)
+
+This is useful for:
+- Debugging SSO issues
+- Using the token in other scripts
+- Checking token expiry
+- Verifying SSO configuration
+- Running AWS CLI commands that need the token
+
+Example usage:
+```bash
+# Source the script to get the token
+source get_token.sh
+
+# The token is now available in your current shell
+echo $ACCESS_TOKEN
+
+# Use it in AWS CLI commands
+aws sso list-accounts --access-token $ACCESS_TOKEN
+```
+
+Note: If you run the script with `./get_token.sh`, the ACCESS_TOKEN variable will not be available in your shell. You must use `source get_token.sh` or `. get_token.sh`.
 
 ## set_profiles.sh
 
