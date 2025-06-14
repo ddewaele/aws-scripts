@@ -1,4 +1,53 @@
-# AWS SSO Profile Configuration Script
+# AWS SSO Scripts
+
+This directory contains scripts for managing AWS SSO (Single Sign-On) configurations and profiles.
+
+## Available Scripts
+
+### set_profiles.sh
+Configures AWS CLI profiles from your SSO permissions. See detailed documentation below.
+
+### list_accounts.sh
+Lists all AWS accounts and roles you have access to via IAM Identity Center (formerly AWS SSO).
+
+Usage:
+```bash
+./list_accounts.sh
+```
+
+The script will:
+1. Prompt for your SSO session name
+2. Log you into AWS SSO
+3. Display a table of all accounts you have access to
+4. For each account, show a table of available roles
+
+Example output:
+```
+📋 Listing all accounts you have access to:
+----------------------------------------
+|  AccountId   |  AccountName  |
+|-------------|---------------|
+|  123456789  |  Production   |
+|  987654321  |  Development  |
+
+👥 Available roles per account:
+----------------------------------------
+Account: Production (123456789)
+Roles:
+|  RoleName  |
+|------------|
+|  Admin     |
+|  Developer |
+
+Account: Development (987654321)
+Roles:
+|  RoleName  |
+|------------|
+|  Admin     |
+|  Developer |
+```
+
+## set_profiles.sh
 
 This script automates the creation of AWS CLI profiles for AWS SSO (Single Sign-On) accounts and roles. It helps you set up multiple AWS profiles based on your SSO permissions, making it easier to switch between different AWS accounts and roles.
 
@@ -40,8 +89,7 @@ Profiles are created using the following format:
 
 Where:
 - AccountName is sanitized by:
-  - Converting spaces, forward slashes, and dots to underscores
-  - Keeping only letters, numbers, and underscores
+- Converting all non-alphanumeric characters to underscores
 - RoleName is sanitized using the same rules
 
 For example:
